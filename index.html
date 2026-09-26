@@ -12,193 +12,201 @@
 </head>
 <body>
 
-    <!-- Desktop Header / Mobile Top Bar -->
+    <!-- Header / Top Bar -->
     <header class="top-header">
         <div class="header-container">
-            <div class="brand">
+            <div class="brand" onclick="switchView('homeView')">
                 <i class="fa-solid fa-graduation-cap logo-icon"></i>
                 <span class="brand-name">StudyHub</span>
             </div>
 
-            <!-- Select Goal Dropdown -->
             <div class="goal-selector">
                 <i class="fa-solid fa-crosshairs"></i>
-                <select id="goalSelect" onchange="changeGoal(this.value)">
-                    <option value="all">Select Goal: All Classes</option>
-                    <option value="class10">Class 10th Board</option>
-                    <option value="class12">Class 12th Board</option>
-                    <option value="neet_jee">NEET / JEE Target</option>
-                    <option value="junior">Junior (Class 1-8)</option>
+                <select id="goalSelect">
+                    <option value="all">All Classes</option>
+                    <option value="class10">Class 10th</option>
+                    <option value="class12">Class 12th</option>
+                    <option value="jee_neet">JEE / NEET</option>
                 </select>
             </div>
 
-            <!-- Desktop Search & Actions -->
-            <div class="header-right">
-                <div class="search-box">
-                    <i class="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" id="searchInput" placeholder="Search Notes, Books, Chapters..." onkeyup="filterContent()">
-                </div>
-                <button class="ai-btn" onclick="openAiModal()">
-                    <i class="fa-solid fa-robot"></i> Ask AI
-                </button>
-            </div>
+            <button class="ai-btn" onclick="switchView('aiView')">
+                <i class="fa-solid fa-robot"></i> Ask AI
+            </button>
         </div>
     </header>
 
-    <!-- Main Container -->
+    <!-- Main Content Area -->
     <main class="main-layout">
 
-        <!-- Top Banner Carousel Section -->
-        <section class="banner-section">
+        <!-- 1. HOME VIEW SCREEN -->
+        <section id="homeView" class="page-view active">
+            <!-- Banner Carousel -->
             <div class="banner-card">
                 <div class="banner-content">
                     <span class="badge">FREE BATCH 2025-26</span>
                     <h2>Nursery Se College Tak,<br>Sab Kuch Ek Hi Platform Par!</h2>
                     <p>NCERT PDFs, Hand-written Notes, PYQs & AI Doubt Solver</p>
-                    <button class="btn-primary" onclick="scrollToNotes()">Explore Now <i class="fa-solid fa-arrow-right"></i></button>
-                </div>
-                <div class="banner-img">
-                    <i class="fa-solid fa-user-graduate"></i>
+                    <button class="btn-primary" onclick="switchView('notesView')">Explore Notes <i class="fa-solid fa-arrow-right"></i></button>
                 </div>
             </div>
-        </section>
 
-        <!-- Quick Access Grid (App Style) -->
-        <section class="quick-access-section">
+            <!-- Quick Access App Grid -->
             <h3 class="section-title"><i class="fa-solid fa-bolt"></i> Quick Access</h3>
             <div class="grid-container">
-                <div class="grid-card" onclick="scrollToNotes('notes')">
-                    <div class="icon-box bg-purple">
-                        <i class="fa-solid fa-file-lines"></i>
-                    </div>
+                <div class="grid-card" onclick="switchView('notesView')">
+                    <div class="icon-box bg-purple"><i class="fa-solid fa-file-lines"></i></div>
                     <span>PDF Class Notes</span>
                 </div>
 
-                <div class="grid-card" onclick="scrollToNotes('books')">
-                    <div class="icon-box bg-blue">
-                        <i class="fa-solid fa-book-open"></i>
-                    </div>
+                <div class="grid-card" onclick="switchView('booksView')">
+                    <div class="icon-box bg-blue"><i class="fa-solid fa-book-open"></i></div>
                     <span>Books & NCERT</span>
                 </div>
 
-                <div class="grid-card" onclick="openQuizModal()">
-                    <div class="icon-box bg-green">
-                        <i class="fa-solid fa-brain"></i>
-                    </div>
+                <div class="grid-card" onclick="switchView('quizView')">
+                    <div class="icon-box bg-green"><i class="fa-solid fa-brain"></i></div>
                     <span>Daily Quiz</span>
                 </div>
 
-                <div class="grid-card" onclick="scrollToNotes('pyq')">
-                    <div class="icon-box bg-orange">
-                        <i class="fa-solid fa-clock-rotate-left"></i>
-                    </div>
+                <div class="grid-card" onclick="switchView('pyqView')">
+                    <div class="icon-box bg-orange"><i class="fa-solid fa-clock-rotate-left"></i></div>
                     <span>10 Yr PYQs</span>
                 </div>
 
-                <div class="grid-card" onclick="openAiModal()">
-                    <div class="icon-box bg-pink">
-                        <i class="fa-solid fa-comments"></i>
-                    </div>
+                <div class="grid-card" onclick="switchView('aiView')">
+                    <div class="icon-box bg-pink"><i class="fa-solid fa-comments"></i></div>
                     <span>Ask AI Doubts</span>
                 </div>
 
-                <div class="grid-card" onclick="openFocusModal()">
-                    <div class="icon-box bg-yellow">
-                        <i class="fa-solid fa-stopwatch"></i>
-                    </div>
+                <div class="grid-card" onclick="switchView('timerView')">
+                    <div class="icon-box bg-yellow"><i class="fa-solid fa-stopwatch"></i></div>
                     <span>Focus Timer</span>
+                </div>
+            </div>
+
+            <!-- Recent Recommended Section -->
+            <div class="content-section">
+                <h3><i class="fa-solid fa-fire"></i> Popular Study Material</h3>
+                <div class="cards-grid" id="homeRecentGrid">
+                    <!-- Loaded dynamically -->
                 </div>
             </div>
         </section>
 
-        <!-- Notes & PDF Directory -->
-        <section class="content-section" id="notesSection">
-            <div class="section-header">
-                <h3><i class="fa-solid fa-folder-open"></i> Class-Wise Notes & Books</h3>
-                <div class="tabs">
-                    <button class="tab-btn active" onclick="filterTab('all', this)">All</button>
-                    <button class="tab-btn" onclick="filterTab('class10', this)">Class 10</button>
-                    <button class="tab-btn" onclick="filterTab('class12', this)">Class 12</button>
-                    <button class="tab-btn" onclick="filterTab('jee', this)">JEE/NEET</button>
-                </div>
+        <!-- 2. PDF CLASS NOTES VIEW SCREEN -->
+        <section id="notesView" class="page-view">
+            <div class="page-header">
+                <button class="back-btn" onclick="switchView('homeView')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <h2><i class="fa-solid fa-file-lines"></i> PDF Class Notes</h2>
             </div>
 
-            <div class="cards-grid" id="notesGrid">
-                <!-- Items populated dynamically via script.js -->
+            <div class="search-filter-bar">
+                <input type="text" id="notesSearch" placeholder="Search Chapter or Subject..." onkeyup="filterNotes()">
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="filterNotesCategory('all', this)">All</button>
+                <button class="tab-btn" onclick="filterNotesCategory('class10', this)">Class 10</button>
+                <button class="tab-btn" onclick="filterNotesCategory('class12', this)">Class 12</button>
+                <button class="tab-btn" onclick="filterNotesCategory('jee', this)">JEE/NEET</button>
+            </div>
+
+            <div class="cards-grid" id="fullNotesGrid">
+                <!-- Loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- 3. BOOKS & NCERT VIEW SCREEN -->
+        <section id="booksView" class="page-view">
+            <div class="page-header">
+                <button class="back-btn" onclick="switchView('homeView')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <h2><i class="fa-solid fa-book-open"></i> NCERT & Reference Books</h2>
+            </div>
+            <div class="cards-grid" id="booksGrid">
+                <!-- Loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- 4. DAILY QUIZ VIEW SCREEN -->
+        <section id="quizView" class="page-view">
+            <div class="page-header">
+                <button class="back-btn" onclick="switchView('homeView')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <h2><i class="fa-solid fa-brain"></i> Daily Practice Quiz</h2>
+            </div>
+            <div class="quiz-container-box">
+                <div id="quizBox">
+                    <!-- Dynamic Quiz Engine -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 5. 10 YR PYQ VIEW SCREEN -->
+        <section id="pyqView" class="page-view">
+            <div class="page-header">
+                <button class="back-btn" onclick="switchView('homeView')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <h2><i class="fa-solid fa-clock-rotate-left"></i> 10 Years Previous Papers</h2>
+            </div>
+            <div class="cards-grid" id="pyqGrid">
+                <!-- Loaded dynamically -->
+            </div>
+        </section>
+
+        <!-- 6. AI DOUBT SOLVER SCREEN -->
+        <section id="aiView" class="page-view">
+            <div class="page-header">
+                <button class="back-btn" onclick="switchView('homeView')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <h2><i class="fa-solid fa-robot"></i> AI Doubt Solver</h2>
+            </div>
+            <div class="chat-wrapper">
+                <div class="chat-body" id="fullChatBody">
+                    <div class="bot-msg">Namaste! 👋 Main aapka AI Study Assistant hoon. Apne doubts yahan poochhein!</div>
+                </div>
+                <div class="chat-footer">
+                    <input type="text" id="fullAiInput" placeholder="Apna sawaal type karein...">
+                    <button onclick="askFullAi()"><i class="fa-solid fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 7. FOCUS TIMER SCREEN -->
+        <section id="timerView" class="page-view">
+            <div class="page-header">
+                <button class="back-btn" onclick="switchView('homeView')"><i class="fa-solid fa-arrow-left"></i> Back</button>
+                <h2><i class="fa-solid fa-stopwatch"></i> Focus Pomodoro Timer</h2>
+            </div>
+            <div class="timer-box">
+                <h1 id="mainTimerDisplay">25:00</h1>
+                <div class="timer-controls">
+                    <button class="btn-start" onclick="startMainTimer()">Start Focus</button>
+                    <button class="btn-pause" onclick="pauseMainTimer()">Pause</button>
+                    <button class="btn-reset" onclick="resetMainTimer()">Reset</button>
+                </div>
             </div>
         </section>
 
     </main>
 
-    <!-- Bottom Navigation Bar (App View - Mobile Only) -->
+    <!-- Bottom Navigation Bar (App Navigation) -->
     <nav class="bottom-nav">
-        <a href="#" class="nav-item active" onclick="navClick(this)">
+        <a href="javascript:void(0)" class="nav-item active" id="navHome" onclick="switchView('homeView')">
             <i class="fa-solid fa-house"></i>
             <span>Home</span>
         </a>
-        <a href="#notesSection" class="nav-item" onclick="navClick(this)">
+        <a href="javascript:void(0)" class="nav-item" id="navNotes" onclick="switchView('notesView')">
             <i class="fa-solid fa-book"></i>
             <span>Notes</span>
         </a>
-        <a href="javascript:void(0)" class="nav-item" onclick="openQuizModal(); navClick(this)">
+        <a href="javascript:void(0)" class="nav-item" id="navQuiz" onclick="switchView('quizView')">
             <i class="fa-solid fa-pen-to-square"></i>
             <span>Quiz</span>
         </a>
-        <a href="javascript:void(0)" class="nav-item" onclick="openAiModal(); navClick(this)">
+        <a href="javascript:void(0)" class="nav-item" id="navAi" onclick="switchView('aiView')">
             <i class="fa-solid fa-wand-magic-sparkles"></i>
             <span>AI Doubt</span>
         </a>
     </nav>
 
-    <!-- AI Doubt Solver Modal -->
-    <div class="modal-overlay" id="aiModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-robot"></i> AI Doubt Solver</h3>
-                <span class="close-btn" onclick="closeModal('aiModal')">&times;</span>
-            </div>
-            <div class="chat-body" id="chatBody">
-                <div class="bot-msg">Namaste! 👋 Koi bhi doubt ya question yahan poochhein:</div>
-            </div>
-            <div class="chat-footer">
-                <input type="text" id="aiInput" placeholder="Apna sawaal yahan type karein...">
-                <button onclick="askAi()"><i class="fa-solid fa-paper-plane"></i></button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Interactive Quiz Modal -->
-    <div class="modal-overlay" id="quizModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-brain"></i> Interactive Test Engine</h3>
-                <span class="close-btn" onclick="closeModal('quizModal')">&times;</span>
-            </div>
-            <div class="quiz-body" id="quizBody">
-                <!-- Quiz content dynamically injected -->
-            </div>
-        </div>
-    </div>
-
-    <!-- Focus Tools Modal -->
-    <div class="modal-overlay" id="focusModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-stopwatch"></i> Focus Pomodoro Timer</h3>
-                <span class="close-btn" onclick="closeModal('focusModal')">&times;</span>
-            </div>
-            <div class="focus-body">
-                <h1 id="timerDisplay">25:00</h1>
-                <div class="timer-controls">
-                    <button class="btn-start" onclick="startTimer()">Start</button>
-                    <button class="btn-pause" onclick="pauseTimer()">Pause</button>
-                    <button class="btn-reset" onclick="resetTimer()">Reset</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <script src="script.js"></script>
 </body>
-    </html>
-    
+</html>
