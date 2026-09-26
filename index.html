@@ -30,9 +30,16 @@
                 </select>
             </div>
 
-            <button class="ai-btn" onclick="switchView('aiView')">
-                <i class="fa-solid fa-robot"></i> Ask AI
-            </button>
+            <div class="header-actions">
+                <!-- Dark Mode Toggle Button -->
+                <button class="theme-toggle-btn" id="themeBtn" onclick="toggleDarkMode()" title="Toggle Dark/Light Mode">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+
+                <button class="ai-btn" onclick="switchView('aiView')">
+                    <i class="fa-solid fa-robot"></i> Ask AI
+                </button>
+            </div>
         </div>
     </header>
 
