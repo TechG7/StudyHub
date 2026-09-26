@@ -1,162 +1,226 @@
-// Sample Data for Notes & Books
-const notesData = [
-    { title: "Chemical Reactions & Equations", class: "class10", type: "notes", link: "#" },
-    { title: "Electricity - Formula Sheet", class: "class10", type: "notes", link: "#" },
-    { title: "Electrostatics & Potential", class: "class12", type: "notes", link: "#" },
-    { title: "Ray Optics & Optical Instruments", class: "class12", type: "notes", link: "#" },
-    { title: "JEE Physics 10 Yr PYQ Paper", class: "jee", type: "pyq", link: "#" },
-    { title: "NEET Chemistry Formula Book", class: "jee", type: "books", link: "#" }
-];
+// Sample Database
+const database = {
+    notes: [
+        { title: "Chemical Reactions & Equations", class: "class10", subject: "Science" },
+        { title: "Electricity - Formula Sheet", class: "class10", subject: "Physics" },
+        { title: "Electrostatics & Potential", class: "class12", subject: "Physics" },
+        { title: "Ray Optics & Optical Instruments", class: "class12", subject: "Physics" },
+        { title: "JEE Physics Revision Notes", class: "jee", subject: "Physics" },
+        { title: "NEET Organic Chemistry Notes", class: "jee", subject: "Chemistry" }
+    ],
+    books: [
+        { title: "NCERT Class 10 Science Book", desc: "Complete Book PDF" },
+        { title: "NCERT Class 12 Physics Part 1", desc: "Official NCERT Edition" },
+        { title: "HC Verma Concepts of Physics", desc: "Reference Book Solutions" }
+    ],
+    pyqs: [
+        { title: "Class 10 CBSE Board 2024 Science PYQ", desc: "Solved Question Paper" },
+        { title: "Class 12 CBSE Physics 10 Year Paper", desc: "Chapter-wise Solved" },
+        { title: "JEE Main 2023 Physics All Shifts", desc: "Answer Key Included" }
+    ]
+};
 
-// Initialize Notes on Load
+// Initialize App
 document.addEventListener("DOMContentLoaded", () => {
-    displayNotes(notesData);
-    initQuiz();
-});
-
-// Render Notes Cards
-function displayNotes(data) {
-    const grid = document.getElementById("notesGrid");
-    grid.innerHTML = "";
-
-    if (data.length === 0) {
-        grid.innerHTML = "<p style='grid-column: 1/-1; text-align:center;'>Koi notes nahi mile!</p>";
-        return;
+    // Load saved Dark Mode preference
+    if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark-mode");
+        const themeBtn = document.getElementById("themeBtn");
+        if (themeBtn) themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
     }
 
-    data.forEach(item => {
-        const card = document.createElement("div");
-        card.className = "note-card";
-        card.innerHTML = `
-            <h4>${item.title}</h4>
-            <p>Category: ${item.class.toUpperCase()}</p>
-            <button onclick="openNoteLink('${item.title}')"><i class="fa-solid fa-download"></i> View / Download PDF</button>
-        `;
-        grid.appendChild(card);
+    loadHomeData();
+    loadNotesData(database.notes);
+    loadBooksData();
+    loadPyqData();
+    initQuizEngine();
+});
+
+// Dark Mode Toggle Function
+function toggleDarkMode() {
+    document.body.classList.toggle("dark-mode");
+    const themeBtn = document.getElementById("themeBtn");
+    const isDark = document.body.classList.contains("dark-mode");
+
+    if (isDark) {
+        themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+        localStorage.setItem("theme", "dark");
+    } else {
+        themeBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+        localStorage.setItem("theme", "light");
+    }
+}
+
+// Switch Views System (Page Navigation)
+function switchView(viewId) {
+    document.querySelectorAll(".page-view").forEach(page => {
+        page.classList.remove("active");
+    });
+
+    const target = document.getElementById(viewId);
+    if (target) {
+        target.classList.add("active");
+        window.scrollTo(0, 0);
+    }
+
+    document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
+    if (viewId === 'homeView') document.getElementById("navHome")?.classList.add("active");
+    if (viewId === 'notesView') document.getElementById("navNotes")?.classList.add("active");
+    if (viewId === 'quizView') document.getElementById("navQuiz")?.classList.add("active");
+    if (viewId === 'aiView') document.getElementById("navAi")?.classList.add("active");
+}
+
+// Load Home Screen Content
+function loadHomeData() {
+    const homeGrid = document.getElementById("homeRecentGrid");
+    if (!homeGrid) return;
+    homeGrid.innerHTML = "";
+    database.notes.slice(0, 4).forEach(item => {
+        homeGrid.appendChild(createCard(item.title, `Class: ${item.class.toUpperCase()}`));
     });
 }
 
-// Filter Notes by Category Tab
-function filterTab(category, btn) {
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
+// Load Notes Screen Content
+function loadNotesData(items) {
+    const grid = document.getElementById("fullNotesGrid");
+    if (!grid) return;
+    grid.innerHTML = "";
+    if (items.length === 0) {
+        grid.innerHTML = "<p>Koi notes nahi mile!</p>";
+        return;
+    }
+    items.forEach(item => {
+        grid.appendChild(createCard(item.title, `Category: ${item.class.toUpperCase()}`));
+    });
+}
+
+// Load Books
+function loadBooksData() {
+    const grid = document.getElementById("booksGrid");
+    if (!grid) return;
+    grid.innerHTML = "";
+    database.books.forEach(item => {
+        grid.appendChild(createCard(item.title, item.desc));
+    });
+}
+
+// Load PYQs
+function loadPyqData() {
+    const grid = document.getElementById("pyqGrid");
+    if (!grid) return;
+    grid.innerHTML = "";
+    database.pyqs.forEach(item => {
+        grid.appendChild(createCard(item.title, item.desc));
+    });
+}
+
+// Reusable Card Generator
+function createCard(title, desc) {
+    const card = document.createElement("div");
+    card.className = "note-card";
+    card.innerHTML = `
+        <h4>${title}</h4>
+        <p>${desc}</p>
+        <button onclick="downloadPdf('${title}')"><i class="fa-solid fa-download"></i> View / Download PDF</button>
+    `;
+    return card;
+}
+
+// Search and Category Filter
+function filterNotesCategory(category, btn) {
+    document.querySelectorAll("#notesView .tab-btn").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
 
-    if (category === "all") {
-        displayNotes(notesData);
+    if (category === 'all') {
+        loadNotesData(database.notes);
     } else {
-        const filtered = notesData.filter(item => item.class === category);
-        displayNotes(filtered);
+        const filtered = database.notes.filter(n => n.class === category);
+        loadNotesData(filtered);
     }
 }
 
-// Search Filter
-function filterContent() {
-    const query = document.getElementById("searchInput").value.toLowerCase();
-    const filtered = notesData.filter(item => item.title.toLowerCase().includes(query));
-    displayNotes(filtered);
+function filterNotes() {
+    const query = document.getElementById("notesSearch").value.toLowerCase();
+    const filtered = database.notes.filter(n => n.title.toLowerCase().includes(query));
+    loadNotesData(filtered);
 }
 
-// Modal Toggle Functions
-function openAiModal() { document.getElementById("aiModal").style.display = "flex"; }
-function openQuizModal() { document.getElementById("quizModal").style.display = "flex"; }
-function openFocusModal() { document.getElementById("focusModal").style.display = "flex"; }
-
-function closeModal(id) {
-    document.getElementById(id).style.display = "none";
-}
-
-// AI Doubt Solver Simulation
-function askAi() {
-    const input = document.getElementById("aiInput");
-    const chatBody = document.getElementById("chatBody");
-
+// AI Assistant
+function askFullAi() {
+    const input = document.getElementById("fullAiInput");
+    const chatBody = document.getElementById("fullChatBody");
     if (!input.value.trim()) return;
 
-    // Add User Message
-    const userDiv = document.createElement("div");
-    userDiv.className = "user-msg";
-    userDiv.innerText = input.value;
-    chatBody.appendChild(userDiv);
+    const userMsg = document.createElement("div");
+    userMsg.className = "user-msg";
+    userMsg.innerText = input.value;
+    chatBody.appendChild(userMsg);
 
     const question = input.value;
     input.value = "";
     chatBody.scrollTop = chatBody.scrollHeight;
 
-    // Simulate AI Response
     setTimeout(() => {
-        const botDiv = document.createElement("div");
-        botDiv.className = "bot-msg";
-        botDiv.innerText = `AI Response: Aapne poochha "${question}". Iska detail answer aapke NCERT Chapter section mein available hai!`;
-        chatBody.appendChild(botDiv);
+        const botMsg = document.createElement("div");
+        botMsg.className = "bot-msg";
+        botMsg.innerText = `AI Response: Aapne poochha "${question}". Iska solution bilkul simple hai, hamare NCERT Class Notes check karein!`;
+        chatBody.appendChild(botMsg);
         chatBody.scrollTop = chatBody.scrollHeight;
-    }, 1000);
+    }, 800);
 }
 
 // Quiz System
 const quizQuestions = [
-    { q: "What is the chemical formula of Rust?", options: ["Fe2O3.xH2O", "FeSO4", "FeCl3", "FeO"], ans: 0 },
-    { q: "SI unit of Electric Current is?", options: ["Volt", "Ampere", "Ohm", "Watt"], ans: 1 }
+    { q: "Rusting of iron is which type of reaction?", options: ["Chemical Change", "Physical Change", "Reversible Change", "None"], ans: 0 },
+    { q: "SI unit of Electric Resistance is?", options: ["Ampere", "Volt", "Ohm", "Watt"], ans: 2 }
 ];
 
-function initQuiz() {
-    const quizBody = document.getElementById("quizBody");
+function initQuizEngine() {
+    const box = document.getElementById("quizBox");
+    if (!box) return;
     let currentQ = 0;
-
-    function renderQuestion() {
-        const q = quizQuestions[currentQ];
-        quizBody.innerHTML = `
-            <p><strong>Q${currentQ + 1}: ${q.q}</strong></p>
-            <div style="margin-top:10px; display:flex; flex-direction:column; gap:8px;">
-                ${q.options.map((opt, idx) => `<button style="padding:10px; border:1px solid #ccc; border-radius:8px; text-align:left; background:white; cursor:pointer;" onclick="checkAns(${idx}, ${q.ans})">${opt}</button>`).join('')}
-            </div>
-        `;
-    }
-    renderQuestion();
+    const q = quizQuestions[currentQ];
+    
+    box.innerHTML = `
+        <h3>Question 1:</h3>
+        <p style="margin:15px 0; font-weight:600;">${q.q}</p>
+        <div style="display:flex; flex-direction:column; gap:10px;">
+            ${q.options.map((opt, i) => `<button style="padding:10px; border:1px solid #ccc; border-radius:8px; cursor:pointer;" onclick="checkAnswer(${i}, ${q.ans})">${opt}</button>`).join('')}
+        </div>
+    `;
 }
 
-function checkAns(selected, correct) {
-    if (selected === correct) {
-        alert("Sahi Jawab! 🎉");
-    } else {
-        alert("Galat Jawab! Sahi uttar hai option " + (correct + 1));
-    }
+function checkAnswer(sel, ans) {
+    if (sel === ans) alert("Sahi Jawab! 🎉");
+    else alert("Galat Jawab!");
 }
 
-// Pomodoro Timer Logic
-let timer;
-let timeLeft = 1500; // 25 min
+// Timer
+let mainTimer;
+let mainTimeLeft = 1500;
 
-function startTimer() {
-    clearInterval(timer);
-    timer = setInterval(() => {
-        if (timeLeft <= 0) {
-            clearInterval(timer);
-            alert("Focus time complete!");
+function startMainTimer() {
+    clearInterval(mainTimer);
+    mainTimer = setInterval(() => {
+        if (mainTimeLeft <= 0) {
+            clearInterval(mainTimer);
+            alert("Focus Time Over!");
         } else {
-            timeLeft--;
-            updateTimerDisplay();
+            mainTimeLeft--;
+            updateTimerView();
         }
     }, 1000);
 }
 
-function pauseTimer() { clearInterval(timer); }
-function resetTimer() { clearInterval(timer); timeLeft = 1500; updateTimerDisplay(); }
+function pauseMainTimer() { clearInterval(mainTimer); }
+function resetMainTimer() { clearInterval(mainTimer); mainTimeLeft = 1500; updateTimerView(); }
 
-function updateTimerDisplay() {
-    const min = Math.floor(timeLeft / 60);
-    const sec = timeLeft % 60;
-    document.getElementById("timerDisplay").innerText = `${min}:${sec < 10 ? '0' : ''}${sec}`;
+function updateTimerView() {
+    const m = Math.floor(mainTimeLeft / 60);
+    const s = mainTimeLeft % 60;
+    document.getElementById("mainTimerDisplay").innerText = `${m}:${s < 10 ? '0' : ''}${s}`;
 }
 
-function scrollToNotes() {
-    document.getElementById("notesSection").scrollIntoView({ behavior: 'smooth' });
+function downloadPdf(title) {
+    alert(`Opening PDF: ${title}`);
 }
-
-function openNoteLink(title) {
-    alert(`Downloading / Opening PDF for: ${title}`);
-}
-
-function navClick(element) {
-    document.querySelectorAll(".nav-item").forEach(item => item.classList.remove("active"));
-    element.classList.add("active");
-                  }
