@@ -1,448 +1,203 @@
 <!DOCTYPE html>
-<html lang="en" class="dark scroll-smooth">
+<html lang="hi">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyHub - All-in-One Adaptive Student Portal</title>
-
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        brand: {
-                            500: '#8b5cf6',
-                            600: '#7c3aed',
-                            700: '#6d28d9',
-                            900: '#0f172a'
-                        }
-                    }
-                }
-            }
-        }
-    </script>
-    
+    <title>StudyHub - India's #1 Learning Platform</title>
+    <link rel="stylesheet" href="style.css">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- External Custom CSS -->
-    <link rel="stylesheet" href="style.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col">
+<body>
 
-    <!-- 🚀 NAVBAR -->
-    <header class="sticky top-0 z-50 glass border-b border-slate-800">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-3 cursor-pointer" onclick="window.scrollTo(0,0)">
-                <div class="bg-gradient-to-tr from-violet-600 to-indigo-500 p-2.5 rounded-xl shadow-lg shadow-violet-500/20">
-                    <i class="fa-solid fa-graduation-cap text-xl text-white"></i>
-                </div>
-                <span class="text-2xl font-extrabold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent">
-                    StudyHub
-                </span>
+    <!-- Desktop Header / Mobile Top Bar -->
+    <header class="top-header">
+        <div class="header-container">
+            <div class="brand">
+                <i class="fa-solid fa-graduation-cap logo-icon"></i>
+                <span class="brand-name">StudyHub</span>
             </div>
-            
-            <nav class="hidden md:flex items-center space-x-6 text-sm font-semibold text-slate-300">
-                <a href="#hubs" class="hover:text-violet-400 transition">Learning Hubs</a>
-                <a href="#resources" class="hover:text-violet-400 transition">Notes & Books</a>
-                <a href="#quiz" class="hover:text-violet-400 transition">Live Quiz</a>
-                <a href="#tools" class="hover:text-violet-400 transition">Focus Tools</a>
-                <a href="#studyroom" class="hover:text-violet-400 transition">Live Room</a>
-            </nav>
 
-            <div class="flex items-center space-x-3">
-                <button onclick="openDoubtModal()" class="flex items-center space-x-2 bg-slate-800 hover:bg-slate-700 px-3.5 py-2 rounded-lg text-xs font-semibold border border-slate-700 text-violet-300 transition">
-                    <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i>
-                    <span>AI Doubt Solver</span>
+            <!-- Select Goal Dropdown -->
+            <div class="goal-selector">
+                <i class="fa-solid fa-crosshairs"></i>
+                <select id="goalSelect" onchange="changeGoal(this.value)">
+                    <option value="all">Select Goal: All Classes</option>
+                    <option value="class10">Class 10th Board</option>
+                    <option value="class12">Class 12th Board</option>
+                    <option value="neet_jee">NEET / JEE Target</option>
+                    <option value="junior">Junior (Class 1-8)</option>
+                </select>
+            </div>
+
+            <!-- Desktop Search & Actions -->
+            <div class="header-right">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="searchInput" placeholder="Search Notes, Books, Chapters..." onkeyup="filterContent()">
+                </div>
+                <button class="ai-btn" onclick="openAiModal()">
+                    <i class="fa-solid fa-robot"></i> Ask AI
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- 🔥 HERO SECTION -->
-    <section class="relative overflow-hidden py-16 md:py-20 px-4 text-center">
-        <div class="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-violet-600/20 rounded-full blur-3xl -z-10"></div>
-        
-        <div class="max-w-4xl mx-auto">
-            <span class="inline-flex items-center space-x-2 bg-violet-500/10 border border-violet-500/20 px-3.5 py-1.5 rounded-full text-xs font-semibold text-violet-400 mb-6">
-                <i class="fa-solid fa-sparkles"></i>
-                <span>India's #1 Age-Adaptive Study Portal</span>
-            </span>
-            
-            <h1 class="text-4xl sm:text-6xl font-extrabold text-white leading-tight mb-6">
-                Nursery se College Tak, <br>
-                <span class="bg-gradient-to-r from-violet-400 via-purple-300 to-cyan-400 bg-clip-text text-transparent">
-                    Sab Kuch Ek Hi Platform Par!
-                </span>
-            </h1>
-            
-            <p class="text-slate-400 text-base sm:text-lg mb-8 max-w-2xl mx-auto">
-                NCERT Books, Hand-written Notes, PYQs, AI Doubt Solver, Practice Quizzes aur Ambient Focus Music—har student ke liye custom learning experience.
-            </p>
+    <!-- Main Container -->
+    <main class="main-layout">
 
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="#resources" class="w-full sm:w-auto bg-violet-600 hover:bg-violet-700 text-white font-bold px-8 py-3.5 rounded-xl shadow-lg shadow-violet-600/30 transition">
-                    Find Notes & NCERT <i class="fa-solid fa-magnifying-glass ml-2"></i>
-                </a>
-                <button onclick="openDoubtModal()" class="w-full sm:w-auto glass hover:bg-slate-800 text-violet-300 font-semibold px-6 py-3.5 rounded-xl transition border border-violet-500/30 flex items-center justify-center space-x-2">
-                    <i class="fa-solid fa-wand-magic-sparkles text-violet-400"></i>
-                    <span>Ask AI Doubt Solver</span>
-                </button>
-            </div>
-
-            <!-- Stats Bar -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 pt-8 border-t border-slate-800/80">
-                <div>
-                    <h4 class="text-2xl font-bold text-white">50,000+</h4>
-                    <p class="text-xs text-slate-400">Free Notes & Books</p>
+        <!-- Top Banner Carousel Section -->
+        <section class="banner-section">
+            <div class="banner-card">
+                <div class="banner-content">
+                    <span class="badge">FREE BATCH 2025-26</span>
+                    <h2>Nursery Se College Tak,<br>Sab Kuch Ek Hi Platform Par!</h2>
+                    <p>NCERT PDFs, Hand-written Notes, PYQs & AI Doubt Solver</p>
+                    <button class="btn-primary" onclick="scrollToNotes()">Explore Now <i class="fa-solid fa-arrow-right"></i></button>
                 </div>
-                <div>
-                    <h4 class="text-2xl font-bold text-violet-400">100% Free</h4>
-                    <p class="text-xs text-slate-400">Open Access Materials</p>
-                </div>
-                <div>
-                    <h4 class="text-2xl font-bold text-cyan-400">24/7</h4>
-                    <p class="text-xs text-slate-400">AI Doubt Assistance</p>
-                </div>
-                <div>
-                    <h4 class="text-2xl font-bold text-emerald-400">4.9 ★</h4>
-                    <p class="text-xs text-slate-400">Student Rating</p>
+                <div class="banner-img">
+                    <i class="fa-solid fa-user-graduate"></i>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- 🎓 AGE-ADAPTIVE HUBS -->
-    <section id="hubs" class="py-12 px-4 max-w-7xl mx-auto w-full">
-        <div class="text-center mb-8">
-            <h2 class="text-3xl font-bold text-white mb-2">Apni Category Chunein</h2>
-            <p class="text-slate-400 text-sm">Age aur class ke hisab se customized dashboard aur content</p>
-        </div>
-
-        <!-- Hub Switcher Tabs -->
-        <div class="flex justify-center mb-8">
-            <div class="glass p-1.5 rounded-2xl flex space-x-1 border border-slate-800">
-                <button onclick="switchTab('junior')" id="tab-junior" class="px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition bg-violet-600 text-white">
-                    👶 Junior Hub (1-5)
-                </button>
-                <button onclick="switchTab('senior')" id="tab-senior" class="px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition text-slate-400 hover:text-white">
-                    📚 Senior Hub (6-12)
-                </button>
-                <button onclick="switchTab('pro')" id="tab-pro" class="px-5 py-2.5 rounded-xl font-bold text-xs sm:text-sm transition text-slate-400 hover:text-white">
-                    🚀 Career & Competitive
-                </button>
-            </div>
-        </div>
-
-        <!-- TAB CONTENT: JUNIOR HUB -->
-        <div id="content-junior" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="glass p-6 rounded-2xl border border-slate-800 hover:border-violet-500/50 transition">
-                <div class="w-12 h-12 bg-amber-500/10 text-amber-400 rounded-xl flex items-center justify-center text-xl mb-4">
-                    <i class="fa-solid fa-icons"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-2">Phonics & Rhymes</h3>
-                <p class="text-slate-400 text-sm mb-4">Interactive audio-visual cards aur rhymes for toddlers and primary kids.</p>
-                <a href="#resources" onclick="filterClass('Class 1')" class="text-xs text-amber-400 font-semibold">Explore Junior Cards →</a>
-            </div>
-            <div class="glass p-6 rounded-2xl border border-slate-800 hover:border-violet-500/50 transition">
-                <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-xl mb-4">
-                    <i class="fa-solid fa-shapes"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-2">Basic Math & Shapes</h3>
-                <p class="text-slate-400 text-sm mb-4">Visual addition, subtraction, aur geometrical shapes in 3D animated blocks.</p>
-                <a href="#resources" onclick="filterClass('Class 1')" class="text-xs text-emerald-400 font-semibold">Practice Math →</a>
-            </div>
-            <div class="glass p-6 rounded-2xl border border-slate-800 hover:border-violet-500/50 transition">
-                <div class="w-12 h-12 bg-cyan-500/10 text-cyan-400 rounded-xl flex items-center justify-center text-xl mb-4">
-                    <i class="fa-solid fa-microphone"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-2">Voice Buddy AI</h3>
-                <p class="text-slate-400 text-sm mb-4">Bol kar sawal poochiye aur AI kahaniyo aur examples ke zariye samjhayega.</p>
-                <button onclick="openDoubtModal()" class="text-xs text-cyan-400 font-semibold text-left">Try Voice AI →</button>
-            </div>
-        </div>
-
-        <!-- TAB CONTENT: SENIOR HUB -->
-        <div id="content-senior" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="glass p-6 rounded-2xl border border-slate-800 hover:border-violet-500/50 transition">
-                <div class="w-12 h-12 bg-violet-500/10 text-violet-400 rounded-xl flex items-center justify-center text-xl mb-4">
-                    <i class="fa-solid fa-book-bookmark"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-2">NCERT & State Books</h3>
-                <p class="text-slate-400 text-sm mb-4">Class 6th se 12th tak ki saare subjects ki NCERT PDFs aur solution sets.</p>
-                <a href="#resources" onclick="filterClass('Class 10')" class="text-xs text-violet-400 font-semibold">View NCERT PDFs →</a>
-            </div>
-            <div class="glass p-6 rounded-2xl border border-slate-800 hover:border-violet-500/50 transition">
-                <div class="w-12 h-12 bg-indigo-500/10 text-indigo-400 rounded-xl flex items-center justify-center text-xl mb-4">
-                    <i class="fa-solid fa-file-pen"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-2">10 Years PYQs</h3>
-                <p class="text-slate-400 text-sm mb-4">Board Exams ke pichle 10 saal ke question papers chapter-wise solve kiye hue.</p>
-                <a href="#resources" onclick="filterClass('Class 12')" class="text-xs text-indigo-400 font-semibold">Solve PYQs →</a>
-            </div>
-            <div class="glass p-6 rounded-2xl border border-slate-800 hover:border-violet-500/50 transition">
-                <div class="w-12 h-12 bg-rose-500/10 text-rose-400 rounded-xl flex items-center justify-center text-xl mb-4">
-                    <i class="fa-solid fa-flask"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-2">Virtual 3D Science Labs</h3>
-                <p class="text-slate-400 text-sm mb-4">Physics aur Chemistry ke experiments ko browser me visual simulation me samjhein.</p>
-                <a href="#resources" onclick="filterClass('Class 10')" class="text-xs text-rose-400 font-semibold cursor-pointer">Open Science Lab →</a>
-            </div>
-        </div>
-
-        <!-- TAB CONTENT: PRO / CAREER -->
-        <div id="content-pro" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="glass p-6 rounded-2xl border border-slate-800 hover:border-violet-500/50 transition">
-                <div class="w-12 h-12 bg-cyan-500/10 text-cyan-400 rounded-xl flex items-center justify-center text-xl mb-4">
-                    <i class="fa-solid fa-chart-line"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-2">JEE / NEET Mock Tests</h3>
-                <p class="text-slate-400 text-sm mb-4">NTA pattern par live timer ke saath adaptive test series aur practice papers.</p>
-                <a href="#resources" onclick="filterClass('JEE/NEET')" class="text-xs text-cyan-400 font-semibold">Start JEE/NEET Prep →</a>
-            </div>
-            <div class="glass p-6 rounded-2xl border border-slate-800 hover:border-violet-500/50 transition">
-                <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-xl flex items-center justify-center text-xl mb-4">
-                    <i class="fa-solid fa-laptop-code"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-2">Upskilling & Tech</h3>
-                <p class="text-slate-400 text-sm mb-4">Python, Web Development aur Graphic Design ke basic learning guides.</p>
-                <a href="#resources" onclick="filterClass('JEE/NEET')" class="text-xs text-emerald-400 font-semibold">Explore Tech Notes →</a>
-            </div>
-            <div class="glass p-6 rounded-2xl border border-slate-800 hover:border-violet-500/50 transition">
-                <div class="w-12 h-12 bg-amber-500/10 text-amber-400 rounded-xl flex items-center justify-center text-xl mb-4">
-                    <i class="fa-solid fa-award"></i>
-                </div>
-                <h3 class="text-xl font-bold mb-2">College & Career Guide</h3>
-                <p class="text-slate-400 text-sm mb-4">Engineering, Medical aur General Degree courses ki selection guide.</p>
-                <button onclick="alert('College Predictor Module Syncing...')" class="text-xs text-amber-400 font-semibold">Explore Colleges →</button>
-            </div>
-        </div>
-    </section>
-
-    <!-- 📚 INTERACTIVE NCERT & NOTES DIGITAL LIBRARY -->
-    <section id="resources" class="py-12 px-4 max-w-7xl mx-auto w-full">
-        <div class="glass p-6 sm:p-8 rounded-3xl border border-slate-800 glow">
-            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-                <div>
-                    <span class="bg-violet-500/10 text-violet-400 border border-violet-500/20 px-3 py-1 rounded-full text-xs font-semibold">
-                        📚 Digital Library & PYQ Directory
-                    </span>
-                    <h2 class="text-2xl sm:text-3xl font-extrabold text-white mt-2">Class-Wise Notes & Books Hub</h2>
-                </div>
-                
-                <!-- Live Search Bar -->
-                <div class="relative max-w-md w-full">
-                    <i class="fa-solid fa-magnifying-glass absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                    <input type="text" id="searchInput" oninput="searchResources()" placeholder="Search Chapter (e.g. Electricity, Trigonometry, Light)..." class="w-full bg-slate-900 border border-slate-700 rounded-xl pl-11 pr-4 py-3 text-sm text-slate-100 focus:outline-none focus:border-violet-500 transition">
-                </div>
-            </div>
-
-            <!-- Class Filter Pills -->
-            <div class="flex items-center space-x-2 overflow-x-auto pb-4 mb-6" id="classFilterContainer">
-                <!-- Dynamically rendered filters -->
-            </div>
-
-            <!-- Resources Cards Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="resourcesGrid">
-                <!-- Dynamically populated via JS -->
-            </div>
-        </div>
-    </section>
-
-    <!-- 🎯 INTERACTIVE PRACTICE QUIZ SYSTEM -->
-    <section id="quiz" class="py-12 px-4 max-w-4xl mx-auto w-full">
-        <div class="glass p-6 sm:p-8 rounded-3xl border border-slate-800">
-            <div class="flex items-center justify-between mb-6">
-                <div>
-                    <span class="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-semibold">
-                        ⚡ Interactive Quiz Engine
-                    </span>
-                    <h2 class="text-2xl font-bold text-white mt-2">Test Your Knowledge</h2>
-                </div>
-                <span id="quizScoreBadge" class="bg-violet-600/30 text-violet-300 border border-violet-500/40 px-3 py-1.5 rounded-xl text-xs font-bold">
-                    Score: 0 / 0
-                </span>
-            </div>
-
-            <!-- Quiz Card Box -->
-            <div id="quizContainer" class="bg-slate-900/90 p-6 rounded-2xl border border-slate-800">
-                <div class="flex items-center justify-between text-xs text-slate-400 mb-3">
-                    <span id="quizCategory">Category: General Science</span>
-                    <span id="quizQuestionCount">Question 1 of 4</span>
-                </div>
-
-                <h3 id="quizQuestionText" class="text-base sm:text-lg font-bold text-white mb-6">
-                    Loading question...
-                </h3>
-
-                <!-- Options -->
-                <div id="quizOptionsContainer" class="space-y-3 mb-6">
-                    <!-- Dynamic Option Buttons -->
-                </div>
-
-                <div class="flex items-center justify-between pt-4 border-t border-slate-800">
-                    <p id="quizFeedback" class="text-xs font-semibold h-5"></p>
-                    <button id="nextQuizBtn" onclick="nextQuestion()" class="hidden bg-violet-600 hover:bg-violet-700 text-white px-5 py-2 rounded-xl text-xs font-bold transition">
-                        Next Question <i class="fa-solid fa-arrow-right ml-1"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- ⏳ UTILITY TOOL: POMODORO TIMER & FOCUS MUSIC -->
-    <section id="tools" class="py-12 px-4 max-w-5xl mx-auto w-full">
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            
-            <!-- Pomodoro Box -->
-            <div class="glass p-8 rounded-3xl border border-slate-800 text-center flex flex-col justify-between">
-                <div>
-                    <span class="bg-violet-500/10 text-violet-400 px-3 py-1 rounded-full text-xs font-semibold">Productivity Suite</span>
-                    <h2 class="text-2xl font-extrabold text-white mt-3 mb-1">Focus Pomodoro Timer</h2>
-                    <p class="text-slate-400 text-xs mb-6">25 Minute Padhai + 5 Minute Break Technique</p>
-
-                    <div class="text-5xl font-black text-violet-400 tracking-wider mb-6 font-mono" id="timer">
-                        25:00
+        <!-- Quick Access Grid (App Style) -->
+        <section class="quick-access-section">
+            <h3 class="section-title"><i class="fa-solid fa-bolt"></i> Quick Access</h3>
+            <div class="grid-container">
+                <div class="grid-card" onclick="scrollToNotes('notes')">
+                    <div class="icon-box bg-purple">
+                        <i class="fa-solid fa-file-lines"></i>
                     </div>
+                    <span>PDF Class Notes</span>
                 </div>
 
-                <div class="flex items-center justify-center space-x-3">
-                    <button onclick="startTimer()" class="bg-violet-600 hover:bg-violet-700 text-white font-bold px-5 py-2.5 rounded-xl text-xs transition">
-                        <i class="fa-solid fa-play mr-1.5"></i> Start Focus
-                    </button>
-                    <button onclick="pauseTimer()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold px-4 py-2.5 rounded-xl text-xs border border-slate-700 transition">
-                        <i class="fa-solid fa-pause mr-1.5"></i> Pause
-                    </button>
-                    <button onclick="resetTimer()" class="bg-slate-800 hover:bg-slate-700 text-slate-400 font-semibold px-4 py-2.5 rounded-xl text-xs border border-slate-700 transition">
-                        <i class="fa-solid fa-rotate-right mr-1.5"></i> Reset
-                    </button>
-                </div>
-            </div>
-
-            <!-- Ambient Focus Music Player -->
-            <div class="glass p-8 rounded-3xl border border-slate-800 flex flex-col justify-between">
-                <div>
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="bg-cyan-500/10 text-cyan-400 px-3 py-1 rounded-full text-xs font-semibold">Study Audio Ambient</span>
-                        <span id="audioStatusBadge" class="text-[10px] text-slate-500 font-mono">Status: Stopped</span>
+                <div class="grid-card" onclick="scrollToNotes('books')">
+                    <div class="icon-box bg-blue">
+                        <i class="fa-solid fa-book-open"></i>
                     </div>
-                    <h2 class="text-2xl font-extrabold text-white mt-1 mb-1">Focus Sound Engine</h2>
-                    <p class="text-slate-400 text-xs mb-6">Padhai ke dauran concentration aur focus badhane ke liye sound themes.</p>
+                    <span>Books & NCERT</span>
                 </div>
 
-                <div class="space-y-3">
-                    <div class="grid grid-cols-3 gap-2">
-                        <button onclick="toggleSound('rain')" id="sound-rain" class="bg-slate-900 border border-slate-700 hover:border-cyan-500 p-3 rounded-xl text-center transition">
-                            <i class="fa-solid fa-cloud-showers-heavy text-cyan-400 text-lg mb-1 block"></i>
-                            <span class="text-xs text-slate-300 font-semibold">Rain Noise</span>
-                        </button>
-                        <button onclick="toggleSound('white')" id="sound-white" class="bg-slate-900 border border-slate-700 hover:border-violet-500 p-3 rounded-xl text-center transition">
-                            <i class="fa-solid fa-wave-square text-violet-400 text-lg mb-1 block"></i>
-                            <span class="text-xs text-slate-300 font-semibold">Deep Waves</span>
-                        </button>
-                        <button onclick="toggleSound('lofi')" id="sound-lofi" class="bg-slate-900 border border-slate-700 hover:border-emerald-500 p-3 rounded-xl text-center transition">
-                            <i class="fa-solid fa-headphones text-emerald-400 text-lg mb-1 block"></i>
-                            <span class="text-xs text-slate-300 font-semibold">Relax Tone</span>
-                        </button>
+                <div class="grid-card" onclick="openQuizModal()">
+                    <div class="icon-box bg-green">
+                        <i class="fa-solid fa-brain"></i>
                     </div>
+                    <span>Daily Quiz</span>
+                </div>
 
-                    <button onclick="stopSound()" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold py-2 rounded-xl text-xs border border-slate-700 transition">
-                        <i class="fa-solid fa-volume-xmark mr-1.5"></i> Turn Off Audio
-                    </button>
+                <div class="grid-card" onclick="scrollToNotes('pyq')">
+                    <div class="icon-box bg-orange">
+                        <i class="fa-solid fa-clock-rotate-left"></i>
+                    </div>
+                    <span>10 Yr PYQs</span>
+                </div>
+
+                <div class="grid-card" onclick="openAiModal()">
+                    <div class="icon-box bg-pink">
+                        <i class="fa-solid fa-comments"></i>
+                    </div>
+                    <span>Ask AI Doubts</span>
+                </div>
+
+                <div class="grid-card" onclick="openFocusModal()">
+                    <div class="icon-box bg-yellow">
+                        <i class="fa-solid fa-stopwatch"></i>
+                    </div>
+                    <span>Focus Timer</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- Notes & PDF Directory -->
+        <section class="content-section" id="notesSection">
+            <div class="section-header">
+                <h3><i class="fa-solid fa-folder-open"></i> Class-Wise Notes & Books</h3>
+                <div class="tabs">
+                    <button class="tab-btn active" onclick="filterTab('all', this)">All</button>
+                    <button class="tab-btn" onclick="filterTab('class10', this)">Class 10</button>
+                    <button class="tab-btn" onclick="filterTab('class12', this)">Class 12</button>
+                    <button class="tab-btn" onclick="filterTab('jee', this)">JEE/NEET</button>
                 </div>
             </div>
 
-        </div>
-    </section>
-
-    <!-- 🌐 LIVE STUDY ROOM SIMULATOR -->
-    <section id="studyroom" class="py-12 px-4 max-w-7xl mx-auto w-full">
-        <div class="glass p-8 rounded-3xl border border-slate-800 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-                <span class="inline-flex items-center space-x-2 text-emerald-400 text-xs font-bold mb-2">
-                    <span class="w-2.5 h-2.5 bg-emerald-500 rounded-full animate-ping"></span>
-                    <span>1,840 Students Currently Studying Live</span>
-                </span>
-                <h3 class="text-2xl font-bold text-white mb-2">Join Virtual Silent Library</h3>
-                <p class="text-slate-400 text-sm">Apne friends ke saath silent study room join karke focus se padhai karein.</p>
+            <div class="cards-grid" id="notesGrid">
+                <!-- Items populated dynamically via script.js -->
             </div>
-            <button onclick="alert('Virtual Study Room connecting... Welcome to Silent Room #104!')" class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg shadow-emerald-500/20 hover:opacity-90 transition whitespace-nowrap">
-                <i class="fa-solid fa-video mr-2"></i> Enter Live Room
-            </button>
-        </div>
-    </section>
+        </section>
 
-    <!-- 🤖 SMART AI DOUBT SOLVER MODAL -->
-    <div id="doubtModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-        <div class="glass max-w-lg w-full p-6 rounded-2xl border border-slate-700 relative max-h-[90vh] flex flex-col">
-            
-            <button onclick="closeDoubtModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white">
-                <i class="fa-solid fa-xmark text-xl"></i>
-            </button>
-            
-            <div class="flex items-center space-x-2 text-violet-400 mb-2">
-                <i class="fa-solid fa-wand-magic-sparkles text-xl"></i>
-                <h3 class="font-bold text-lg text-white">Smart AI Doubt Solver</h3>
-            </div>
-            
-            <p class="text-xs text-slate-400 mb-4">Text sawal likhein ya photo upload karke step-by-step solution payein.</p>
-            
-            <!-- Key Config Bar -->
-            <div class="mb-3 flex items-center justify-between text-xs bg-slate-900/60 p-2 rounded-lg border border-slate-800">
-                <span class="text-slate-400"><i class="fa-solid fa-key text-amber-400 mr-1"></i> Gemini API Mode:</span>
-                <button onclick="setApiKey()" class="text-violet-400 hover:underline font-semibold" id="apiKeyStatus">
-                    Add Key (Optional)
-                </button>
-            </div>
+    </main>
 
-            <textarea id="doubtInput" rows="3" class="w-full bg-slate-900 border border-slate-700 rounded-xl p-3 text-sm text-slate-100 focus:outline-none focus:border-violet-500 mb-3" placeholder="e.g. Newton's 2nd law kya hai aur iska formula explain karo..."></textarea>
-            
-            <!-- File Upload & Action buttons -->
-            <div class="flex items-center justify-between gap-2 mb-4">
-                <label class="cursor-pointer bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-700 px-3 py-2 rounded-xl text-xs flex items-center space-x-2">
-                    <i class="fa-solid fa-camera text-violet-400"></i>
-                    <span id="fileName">Upload Photo</span>
-                    <input type="file" id="imageInput" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
-                </label>
-                
-                <button onclick="solveDoubt()" class="flex-1 bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 rounded-xl transition flex items-center justify-center space-x-2 text-sm shadow-lg shadow-violet-600/30">
-                    <span>Solve Step-by-Step</span>
-                    <i class="fa-solid fa-paper-plane text-xs"></i>
-                </button>
-            </div>
+    <!-- Bottom Navigation Bar (App View - Mobile Only) -->
+    <nav class="bottom-nav">
+        <a href="#" class="nav-item active" onclick="navClick(this)">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="#notesSection" class="nav-item" onclick="navClick(this)">
+            <i class="fa-solid fa-book"></i>
+            <span>Notes</span>
+        </a>
+        <a href="javascript:void(0)" class="nav-item" onclick="openQuizModal(); navClick(this)">
+            <i class="fa-solid fa-pen-to-square"></i>
+            <span>Quiz</span>
+        </a>
+        <a href="javascript:void(0)" class="nav-item" onclick="openAiModal(); navClick(this)">
+            <i class="fa-solid fa-wand-magic-sparkles"></i>
+            <span>AI Doubt</span>
+        </a>
+    </nav>
 
-            <!-- Image Preview Box -->
-            <div id="imagePreviewContainer" class="hidden mb-3 relative max-h-32 rounded-lg overflow-hidden border border-slate-700">
-                <img id="imagePreview" class="w-full h-32 object-cover" src="" alt="Preview">
-                <button onclick="removeSelectedImage()" class="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full text-xs">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+    <!-- AI Doubt Solver Modal -->
+    <div class="modal-overlay" id="aiModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-robot"></i> AI Doubt Solver</h3>
+                <span class="close-btn" onclick="closeModal('aiModal')">&times;</span>
             </div>
-
-            <!-- Solution Result Box -->
-            <div id="doubtResult" class="hidden p-4 bg-slate-900/90 border border-violet-500/40 rounded-xl text-xs text-slate-200 leading-relaxed overflow-y-auto max-h-56">
+            <div class="chat-body" id="chatBody">
+                <div class="bot-msg">Namaste! 👋 Koi bhi doubt ya question yahan poochhein:</div>
+            </div>
+            <div class="chat-footer">
+                <input type="text" id="aiInput" placeholder="Apna sawaal yahan type karein...">
+                <button onclick="askAi()"><i class="fa-solid fa-paper-plane"></i></button>
             </div>
         </div>
     </div>
 
-    <!-- ⚡ FOOTER -->
-    <footer class="mt-auto border-t border-slate-800/80 bg-slate-950/80 py-8 text-center text-xs text-slate-500">
-        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p>© 2026 StudyHub Platform. Built for Students across India.</p>
-            <div class="flex space-x-4 text-slate-400 text-lg">
-                <a href="#" class="hover:text-violet-400"><i class="fa-brands fa-github"></i></a>
-                <a href="#" class="hover:text-violet-400"><i class="fa-brands fa-twitter"></i></a>
-                <a href="#" class="hover:text-violet-400"><i class="fa-brands fa-youtube"></i></a>
+    <!-- Interactive Quiz Modal -->
+    <div class="modal-overlay" id="quizModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-brain"></i> Interactive Test Engine</h3>
+                <span class="close-btn" onclick="closeModal('quizModal')">&times;</span>
+            </div>
+            <div class="quiz-body" id="quizBody">
+                <!-- Quiz content dynamically injected -->
             </div>
         </div>
-    </footer>
+    </div>
 
-    <!-- External JavaScript File -->
+    <!-- Focus Tools Modal -->
+    <div class="modal-overlay" id="focusModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-stopwatch"></i> Focus Pomodoro Timer</h3>
+                <span class="close-btn" onclick="closeModal('focusModal')">&times;</span>
+            </div>
+            <div class="focus-body">
+                <h1 id="timerDisplay">25:00</h1>
+                <div class="timer-controls">
+                    <button class="btn-start" onclick="startTimer()">Start</button>
+                    <button class="btn-pause" onclick="pauseTimer()">Pause</button>
+                    <button class="btn-reset" onclick="resetTimer()">Reset</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
